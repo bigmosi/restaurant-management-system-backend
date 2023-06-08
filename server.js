@@ -41,12 +41,13 @@ app.get('/restaurants', async (req, res) => {
 });
 
 app.get('/restaurants/:id', async (req, res) => {
+  console.log(req.params)
   try {
     const { id } = req.params;
     let restaurant;
 
     if (id.length === 24) {
-      restaurant = await Restaurant.findById(id);
+      restaurant = await Product.findById(id);
     } else {
       restaurant = await Restaurant.findOne({ _id: id });
     }
