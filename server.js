@@ -17,8 +17,24 @@ app.use(cors())
 
 app.get('/restaurants', async (req, res) => {
   try {
-    const products = await Product.find({});
-    res.status(200).json(products);
+    // const products = await Product.find({})
+    // .map(product => {
+    //   product.id = product._id
+    //   product._id = undefined
+    //   return product
+    // })
+    // console.log(products)
+    // res.status(200).json(products);
+    const restaurants = await Product.find({});
+    const transformedRestaurants = restaurants.map((restaurant) => {
+      const { _id, ...rest } = restaurant.toObject();
+      return {
+        id: _id.toString(),
+        ...rest,
+      };
+    });
+    console.log(transformedRestaurants);
+    res.status(200).json(transformedRestaurants)
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -27,8 +43,19 @@ app.get('/restaurants', async (req, res) => {
 app.get('/restaurants/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findById(id);
-    res.status(200).json(product);
+    let restaurant;
+
+    if (id.length === 24) {
+      restaurant = await Restaurant.findById(id);
+    } else {
+      restaurant = await Restaurant.findOne({ _id: id });
+    }
+
+    if (!restaurant) {
+      return res.status(404).json({ message: 'Restaurant not found' });
+    }
+
+    res.status(200).json(restaurant);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
