@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Product = require('./models/productModel');
+const Restaurant = require('./models/restaurantModel');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
@@ -13,19 +13,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors())
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 app.get('/restaurants', async (req, res) => {
   try {
-    // const products = await Product.find({})
-    // .map(product => {
-    //   product.id = product._id
-    //   product._id = undefined
-    //   return product
-    // })
-    // console.log(products)
-    // res.status(200).json(products);
-    const restaurants = await Product.find({});
+    const restaurants = await Restaurant.find({});
     const transformedRestaurants = restaurants.map((restaurant) => {
       const { _id, ...rest } = restaurant.toObject();
       return {
@@ -47,7 +41,7 @@ app.get('/restaurants/:id', async (req, res) => {
     let restaurant;
 
     if (id.length === 24) {
-      restaurant = await Product.findById(id);
+      restaurant = await Restaurant.findById(id);
     } else {
       restaurant = await Restaurant.findOne({ _id: id });
     }
@@ -81,7 +75,7 @@ app.post('/restaurants', upload.single('image'), async (req, res) => {
     const imageFile = req.file;
 
     // Create a new restaurant instance
-    const restaurant = new Product({
+    const restaurant = new Restaurant({
       name,
       cuisineType,
       location,
@@ -103,7 +97,7 @@ app.put('/restaurants/:id', upload.single('image'), async (req, res) => {
     const { name, cuisineType, location } = req.body;
     const imagePath = req.file ? req.file.filename : null;
 
-    const updatedRestaurant = await Product.findByIdAndUpdate(
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
       { name, cuisineType, location, image: imagePath },
       { new: true }
@@ -122,7 +116,7 @@ app.put('/restaurants/:id', upload.single('image'), async (req, res) => {
 app.delete('/restaurants/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const restaurant = await Product.findByIdAndDelete(id);
+    const restaurant = await Restaurant.findByIdAndDelete(id);
     if (!restaurant) {
       return res
         .status(404)
