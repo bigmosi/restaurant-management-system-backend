@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const debug = require('debug')('server');
+const chalk = require('chalk');
 const Restaurant = require('./models/restaurantModel');
 const cors = require('cors');
 const multer = require('multer');
@@ -133,7 +135,7 @@ mongoose
   .then(() => {
     console.log('Connected to MongoDB');
     app.listen(8080, () => {
-      console.log('Node API app is running on port 8080');
+      debug(`Server is running on port ${chalk.green(8080)}`);
     });
   })
   .catch((error) => {
