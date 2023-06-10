@@ -7,7 +7,7 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 
-
+const PORT = process.env.PORT || 4000;
 const app = express();
 
 
@@ -134,8 +134,8 @@ mongoose
   .connect('mongodb://localhost:27017/restaurantDB')
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(8080, () => {
-      debug(`Server is running on port ${chalk.green(8080)}`);
+    app.listen(PORT, () => {
+      debug(`Server is running on port ${chalk.green(PORT)}`);
     });
   })
   .catch((error) => {
